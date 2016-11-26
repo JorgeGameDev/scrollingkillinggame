@@ -52,7 +52,8 @@ public class PlayerMovement : MonoBehaviour {
     void HorizontalMovement()
     {
         // Gets the axis from the player controller.
-        float horAxis = 0;
+        float horAxis = Input.GetAxisRaw("Joystick 1 Horizontal");
+        horAxis = Mathf.Round(horAxis);
 
         // Checks if the player has pressed any specific key.
         if(Input.GetKey(_classInfo.moveRight) || XCI.GetButton(XboxButton.DPadRight, _classInfo.assignedController))
@@ -91,7 +92,7 @@ public class PlayerMovement : MonoBehaviour {
     void Jumping()
     {
         // Checks if the player has pressed the jump key.
-        if ((Input.GetKeyDown(_classInfo.jumpKey) || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
+        if ((Input.GetButtonDown("Joystick 1 Jump") || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
         {
             _hasJumped = true;
             _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
