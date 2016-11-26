@@ -5,10 +5,11 @@ using System.Collections;
 public class PlatformFactory : MonoBehaviour {
 
     [Header("Spawning Properties")]
+	public GameObject[] layouts;
 	public float speed = 0.1f;
     public Vector2 spawnPosition;
-	public GameObject prefab;
 	public GameObject firstplatform;
+	public GameObject player;
 
     // Internal.
     private bool _coolDown = false;
@@ -29,15 +30,17 @@ public class PlatformFactory : MonoBehaviour {
 		}
 		// Destroy the first platform.
 		Destroy (firstplatform, 31f);
+
 	}
 
-    // Creates the next set of platforms and deletes the previous cloned platform.
+    // Creates the next set of platforms from a pool of layouts and deletes the previous cloned layout.
 	IEnumerator CreateNext()
 	{   
 		_coolDown = true;
         yield return _waitTimer;
-        GameObject newObject = (GameObject) Instantiate (prefab, spawnPosition, Quaternion.identity);
+		GameObject newObject = (GameObject) Instantiate (layouts[Random.Range(0,layouts.Length)], spawnPosition, Quaternion.identity);
 		Destroy (newObject, 31f);
 		_coolDown = false;
 	}
+		
 }
