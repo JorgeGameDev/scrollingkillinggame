@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using XboxCtrlrInput;
 using System.Collections;
 
 // Takes care of the player movement.
@@ -12,13 +13,15 @@ public class PlayerMovement : MonoBehaviour {
     // Internal.
     private Rigidbody2D _rigidbody;
     private ClassInfo _classInfo;
+    private PlayerDamage _playerDamage;
 
 	// Use this for initialization
 	void Start ()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _classInfo = GetComponent<ClassInfo>();
-	}
+        _playerDamage = GetComponent<PlayerDamage>();
+    }
 	
 	// Update is called once per frame
 	void FixedUpdate ()
@@ -27,7 +30,7 @@ public class PlayerMovement : MonoBehaviour {
         HorizontalMovement();
 
         // Checks if the player has pressed the jump key.
-        if (Input.GetButtonDown("Jump") && IsGrounded())
+        if ((Input.GetKeyDown(_classInfo.jumpKey) || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
         {
             _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
         }
@@ -37,10 +40,31 @@ public class PlayerMovement : MonoBehaviour {
     void HorizontalMovement()
     {
         // Gets the axis from the player controller.
-        float horAxis = Input.GetAxisRaw("Horizontal");
+        float horAxis = 0;
+
+        // Checks if the player has pressed any specific key.
+        if(Input.GetKey(_classInfo.moveRight) || XCI.GetButton(XboxButton.DPadRight, _classInfo.assignedController))
+        {
+            horAxis = 1;
+        }
+        else if(Input.GetKey(_classInfo.moveLeft) || XCI.GetButton(XboxButton.DPadLeft, _classInfo.assignedController))
+        {
+            horAxis = -1;
+        }
 
         // Applies the velocity to the characther based on the player input.
-        Vector2 newVelocity = new Vector2(horAxis * _classInfo.velocity, _rigidbody.velocity.y);
+        float horVelocity = horAxis * _classInfo.velocity;
+
+        if(horVelocity > 0)
+        {
+            horVelocity -= _playerDamage.playerDamage / 100;
+        }
+        else if(horVelocity < 0)
+        {
+
+        }
+
+        Vector2 newVelocity = new Vector2(horVelocity, _rigidbody.velocity.y);
         _rigidbody.velocity = newVelocity;
 
         // Check which direction to flip the sprite on.

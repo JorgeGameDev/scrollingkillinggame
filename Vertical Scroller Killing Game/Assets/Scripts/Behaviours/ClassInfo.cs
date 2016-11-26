@@ -18,4 +18,8 @@ public class ClassInfo : MonoBehaviour {
     public bool isSlowdown;
     public bool isStuned;
 
+    [Header("Keycodes")]
+    public KeyCode moveRight;
+    public KeyCode moveLeft;
+    public KeyCode jumpKey;
 }

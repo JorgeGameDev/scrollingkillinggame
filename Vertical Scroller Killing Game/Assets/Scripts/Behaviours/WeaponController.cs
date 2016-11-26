@@ -45,8 +45,15 @@ public class WeaponController : MonoBehaviour {
         // Confirms that the attacked object is infact a player and not something else.
         if(collision.gameObject.CompareTag("Player"))
         {
-            _hitGameObjects.Add(collision.gameObject);
-            collision.gameObject.GetComponent<PlayerDamage>().ApplyDamage(_classInfo.attackDamage);
+            // Stores this game object to quicker acess.
+            GameObject collidedPlayer = collision.gameObject;
+
+            // Checks if this player hasn't already been collided during this hit session.
+            if(!_hitGameObjects.Contains(collidedPlayer))
+            {
+                _hitGameObjects.Add(collidedPlayer);
+                collidedPlayer.GetComponent<PlayerDamage>().ApplyDamage(_classInfo.attackDamage);
+            }
         }
     }
 }
