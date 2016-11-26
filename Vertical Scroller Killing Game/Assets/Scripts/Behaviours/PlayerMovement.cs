@@ -42,11 +42,36 @@ public class PlayerMovement : MonoBehaviour {
         // Applies the velocity to the characther based on the player input.
         Vector2 newVelocity = new Vector2(horAxis * _classInfo.velocity, _rigidbody.velocity.y);
         _rigidbody.velocity = newVelocity;
+
+        // Check which direction to flip the sprite on.
+        if(horAxis != 0)
+        {
+            transform.localScale = new Vector3(horAxis, 1, 1);
+        }
     }
 
     // Checks if the player is still touching the grand.
     bool IsGrounded()
     {
         return Physics2D.OverlapCircle(jumpingCheck.transform.position, 0.01f, groundLayer);
+    }
+
+
+    // Assures the player is on a platform.
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("Floor"))
+        {
+            transform.SetParent(collision.gameObject.transform);
+        }
+    }
+
+    // And removes it's parent in case it's null.
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Floor"))
+        {
+            transform.SetParent(null);
+        }
     }
 }

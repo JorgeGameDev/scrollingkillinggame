@@ -25,9 +25,11 @@ public class PlatformFactory : MonoBehaviour {
 	void Update () {
 
         // Create the next set of platforms.
-		if (!_coolDown) {
+		if (!_coolDown)
+        {
 			StartCoroutine (CreateNext ());
 		}
+
 		// Destroy the first platform.
 		Destroy (firstplatform, 31f);
 
