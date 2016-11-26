@@ -8,6 +8,7 @@ public class PlatformFactory : MonoBehaviour {
 	public float speed = 0.1f;
     public Vector2 spawnPosition;
 	public GameObject prefab;
+	public GameObject firstplatform;
 
     // Internal.
     private bool _coolDown = false;
@@ -16,7 +17,7 @@ public class PlatformFactory : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        _waitTimer = new WaitForSeconds(5f);
+        _waitTimer = new WaitForSeconds(20f);
     }
 
     // Update is called every frame
@@ -26,14 +27,18 @@ public class PlatformFactory : MonoBehaviour {
 		if (!_coolDown) {
 			StartCoroutine (CreateNext ());
 		}
+		// Destroy the first platform.
+		Destroy (firstplatform, 31f);
 	}
 
-    // Creates the next set of platforms.
+    // Creates the next set of platforms and deletes the previous cloned platform.
 	IEnumerator CreateNext()
 	{   
 		_coolDown = true;
         yield return _waitTimer;
         GameObject newObject = (GameObject) Instantiate (prefab, spawnPosition, Quaternion.identity);
+		Destroy (newObject, 31f);
 		_coolDown = false;
+
 	}
 }
