@@ -33,7 +33,7 @@ public class PlatformFactory : MonoBehaviour {
 	{   
 		_coolDown = true;
         yield return _waitTimer;
-        currentObject = (GameObject) Instantiate (prefab, spawnPosition, Quaternion.identity);
+        GameObject newObject = (GameObject) Instantiate (prefab, spawnPosition, Quaternion.identity);
 		_coolDown = false;
 	}
 }
