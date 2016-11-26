@@ -6,11 +6,14 @@ using System.Collections;
 public class PlayerAttack : MonoBehaviour {
 
     // Internal.
+    private PlayerController _playerController;
     private WeaponController _weaponController;
     private ClassInfo _classInfo;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
+        _playerController = GetComponent<PlayerController>();
         _classInfo = GetComponent<ClassInfo>();
         _weaponController = GetComponentInChildren<WeaponController>();
 	}
@@ -18,7 +21,7 @@ public class PlayerAttack : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	    // Checks if the player has pressed it's assigned controls.
-        if(Input.GetButtonDown("Joystick 1 Attack") || XCI.GetButtonDown(XboxButton.X, _classInfo.assignedController))
+        if(Input.GetButtonDown("Joystick " + _playerController.playerController + " Attack") || XCI.GetButtonDown(XboxButton.X, _classInfo.assignedController))
         {
             // Checks if the animation is already playing or not.
             if(!_weaponController.animationPlaying)

@@ -4,6 +4,7 @@ using System.Collections;
 
 // Takes care of the player movement.
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerMovement : MonoBehaviour {
 
     [Header("Jumping Properties")]
@@ -11,6 +12,7 @@ public class PlayerMovement : MonoBehaviour {
     public LayerMask groundLayer;
 
     // Internal.
+    private PlayerController _playerController;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private ClassInfo _classInfo;
@@ -20,6 +22,7 @@ public class PlayerMovement : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        _playerController = GetComponent<PlayerController>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _classInfo = GetComponent<ClassInfo>();
         _playerDamage = GetComponent<PlayerDamage>();
@@ -52,7 +55,7 @@ public class PlayerMovement : MonoBehaviour {
     void HorizontalMovement()
     {
         // Gets the axis from the player controller.
-        float horAxis = Input.GetAxisRaw("Joystick 1 Horizontal");
+        float horAxis = Input.GetAxisRaw("Joystick " + _playerController.playerController + " Horizontal");
         horAxis = Mathf.Round(horAxis);
 
         // Checks if the player has pressed any specific key.
@@ -92,7 +95,7 @@ public class PlayerMovement : MonoBehaviour {
     void Jumping()
     {
         // Checks if the player has pressed the jump key.
-        if ((Input.GetButtonDown("Joystick 1 Jump") || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
+        if ((Input.GetButtonDown("Joystick " + _playerController.playerController + " Jump") || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
         {
             _hasJumped = true;
             _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
