@@ -12,7 +12,7 @@ public class ClassInfo : MonoBehaviour {
     [Header("Class Properties")]
     public float velocity;
     public float jumpForce;
-    public float attackDamage;
+    public int attackDamage;
 
     [Header("Effects")]
     public bool isSlowdown;

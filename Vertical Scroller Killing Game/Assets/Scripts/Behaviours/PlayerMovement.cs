@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
-using XboxCtrlrInput;
 using System.Collections;
 
 // Takes care of the player movement.
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour {
+
+    [Header("Jumping Properties")]
+    public Transform jumpingCheck;
+    public LayerMask groundLayer;
 
     // Internal.
     private Rigidbody2D _rigidbody;
@@ -18,21 +21,32 @@ public class PlayerMovement : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate ()
+    {
+        // Calls all the necessary functions for player movement.
+        HorizontalMovement();
 
-        // Gets the axis from the player controler.
-        float horAxis = XCI.GetAxisRaw(XboxAxis.LeftStickX);
-        if(XCI.GetButtonDown(XboxButton.DPadRight))
+        // Checks if the player has pressed the jump key.
+        if (Input.GetButtonDown("Jump") && IsGrounded())
         {
-            horAxis = 1;
+            _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
         }
-        else if(XCI.GetButtonDown(XboxButton.DPadLeft))
-        {
-            horAxis = -1;
-        }
+    }
+
+    // Does the horizontal movement.
+    void HorizontalMovement()
+    {
+        // Gets the axis from the player controller.
+        float horAxis = Input.GetAxisRaw("Horizontal");
 
         // Applies the velocity to the characther based on the player input.
         Vector2 newVelocity = new Vector2(horAxis * _classInfo.velocity, _rigidbody.velocity.y);
         _rigidbody.velocity = newVelocity;
-	}
+    }
+
+    // Checks if the player is still touching the grand.
+    bool IsGrounded()
+    {
+        return Physics2D.OverlapCircle(jumpingCheck.transform.position, 0.01f, groundLayer);
+    }
 }

@@ -8,4 +8,10 @@ public class PlayerDamage : MonoBehaviour {
     public float playerDamage;
 
     // Should the player damage affect the movement? Or should it be like an hittable?
+
+    // Applies damage to the player.
+    public void ApplyDamage(int damageValue)
+    {
+        playerDamage += damageValue;
+    }
 }

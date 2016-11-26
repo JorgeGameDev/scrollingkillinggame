@@ -39,6 +39,5 @@ public class PlatformFactory : MonoBehaviour {
         GameObject newObject = (GameObject) Instantiate (prefab, spawnPosition, Quaternion.identity);
 		Destroy (newObject, 31f);
 		_coolDown = false;
-
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 // Controls the animation of the weapon.
 [RequireComponent(typeof(BoxCollider2D))]
@@ -10,12 +10,15 @@ public class WeaponController : MonoBehaviour {
     public bool animationPlaying;
 
     // Internal Components.
+    private List<GameObject> _hitGameObjects = new List<GameObject>();
+    private ClassInfo _classInfo;
     private BoxCollider2D _boxCollider;
     private Animator _animator;
 
     // Use this for initialization.
     void Start()
     {
+        _classInfo = transform.root.GetComponent<ClassInfo>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _animator = GetComponent<Animator>();
     }
@@ -31,7 +34,19 @@ public class WeaponController : MonoBehaviour {
     // Use this to check if the animation is over.
     public void EndAnimation()
     {
+        _hitGameObjects.Clear();
         animationPlaying = false;
         _boxCollider.enabled = false;
+    }
+
+    // Checks if the weapon has hit any other player.
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Confirms that the attacked object is infact a player and not something else.
+        if(collision.gameObject.CompareTag("Player"))
+        {
+            _hitGameObjects.Add(collision.gameObject);
+            collision.gameObject.GetComponent<PlayerDamage>().ApplyDamage(_classInfo.attackDamage);
+        }
     }
 }
