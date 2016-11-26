@@ -6,6 +6,7 @@ using System.Collections;
 public class PlayerDamage : MonoBehaviour {
 
     [Header("Player Damage")]
+    public int stocks = 3;
     public float playerDamage;
     public Text associatedCounter;
 
@@ -13,6 +14,6 @@ public class PlayerDamage : MonoBehaviour {
     public void ApplyDamage(int damageValue)
     {
         playerDamage += damageValue;
-        associatedCounter.text = playerDamage + "%";
+        associatedCounter.text = playerDamage + "% [" + stocks + "]";
     }
 }

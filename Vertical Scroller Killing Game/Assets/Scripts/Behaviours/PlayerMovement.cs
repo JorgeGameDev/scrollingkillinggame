@@ -12,8 +12,10 @@ public class PlayerMovement : MonoBehaviour {
 
     // Internal.
     private Rigidbody2D _rigidbody;
+    private Animator _animator;
     private ClassInfo _classInfo;
     private PlayerDamage _playerDamage;
+    private bool _hasJumped;
 
 	// Use this for initialization
 	void Start ()
@@ -21,6 +23,7 @@ public class PlayerMovement : MonoBehaviour {
         _rigidbody = GetComponent<Rigidbody2D>();
         _classInfo = GetComponent<ClassInfo>();
         _playerDamage = GetComponent<PlayerDamage>();
+        _animator = GetComponent<Animator>();
     }
 	
 	// Update is called once per frame
@@ -28,11 +31,20 @@ public class PlayerMovement : MonoBehaviour {
     {
         // Calls all the necessary functions for player movement.
         HorizontalMovement();
+        Jumping();
+        Animate();
+    }
 
-        // Checks if the player has pressed the jump key.
-        if ((Input.GetKeyDown(_classInfo.jumpKey) || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
+    // Updates the animator to reflect the current animation playing.
+    void Animate()
+    {
+        if(_rigidbody.velocity.x > 0 || _rigidbody.velocity.x < 0)
         {
-            _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
+            _animator.SetBool("Walking", true);
+        }
+        else
+        {
+            _animator.SetBool("Walking", false);
         }
     }
 
@@ -55,13 +67,14 @@ public class PlayerMovement : MonoBehaviour {
         // Applies the velocity to the characther based on the player input.
         float horVelocity = horAxis * _classInfo.velocity;
 
+        // Causes a 
         if(horVelocity > 0)
         {
             horVelocity -= _playerDamage.playerDamage / 100;
         }
         else if(horVelocity < 0)
         {
-
+            horVelocity += _playerDamage.playerDamage / 100;
         }
 
         Vector2 newVelocity = new Vector2(horVelocity, _rigidbody.velocity.y);
@@ -71,6 +84,23 @@ public class PlayerMovement : MonoBehaviour {
         if(horAxis != 0)
         {
             transform.localScale = new Vector3(horAxis, 1, 1);
+        }
+    }
+
+    // Makes the player jump. No shit, sherlock I can't think of a more obvious definition.
+    void Jumping()
+    {
+        // Checks if the player has pressed the jump key.
+        if ((Input.GetKeyDown(_classInfo.jumpKey) || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
+        {
+            _hasJumped = true;
+            _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
+        }
+
+        // Checks if the player's velocity has been zero at some point.
+        if(_rigidbody.velocity.y == 0)
+        {
+            _hasJumped = false;
         }
     }
 
