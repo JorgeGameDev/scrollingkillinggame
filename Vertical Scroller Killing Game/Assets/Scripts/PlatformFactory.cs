@@ -2,20 +2,27 @@
 using System.Collections;
 
 // Creates platforms for generation.
-public class Platforms : MonoBehaviour {
+public class PlatformFactory : MonoBehaviour {
 
     [Header("Spawning Properties")]
-	public float Speed = 0.1f;
+	public float speed = 0.1f;
+    public Vector2 spawnPosition;
 	public GameObject prefab;
-	public Transform paizinho;
 
     // Internal.
     private bool _coolDown = false;
+    private WaitForSeconds _waitTimer;
+
+    // Use this for initialization
+    void Start()
+    {
+        _waitTimer = new WaitForSeconds(5f);
+    }
 
     // Update is called every frame
 	void Update () {
-        // Translates this platform.
-	    transform.Translate(Vector2.down * Time.deltaTime * Speed);
+
+        // Create the next set of platforms.
 		if (!_coolDown) {
 			StartCoroutine (CreateNext ());
 		}
@@ -25,9 +32,8 @@ public class Platforms : MonoBehaviour {
 	IEnumerator CreateNext()
 	{   
 		_coolDown = true;
-		yield return new WaitForSeconds (5f);
-		GameObject instance = (GameObject) Instantiate (prefab, transform.position, Quaternion.identity));
-		prefab.transform.SetParent (paizinho);
+        yield return _waitTimer;
+        currentObject = (GameObject) Instantiate (prefab, spawnPosition, Quaternion.identity);
 		_coolDown = false;
 	}
 }
