@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("Player Manager")]
     public GameObject[] players;
+    public int playersAlive;
 
     [Header("Audio")]
     public AudioClip damageClip;
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour {
     [Header("UI Elements")]
     public GameObject playerText;
     public RectTransform playerRect;
+    public GameObject gameOverCanvas;
 
     // Internal.
     public int _currentController;
@@ -58,7 +60,10 @@ public class GameManager : MonoBehaviour {
             PlayerController playerControler = newPlayer.GetComponent<PlayerController>();
             playerControler.playerController = _currentController;
         }
-	}
+
+        // Counts players alive to the count.
+        playersAlive = players.Length;
+    }
 
     // Used for creating gore at a certain position.
     public void CreateGore(Vector3 transformPosition, int goreAmmount)
@@ -97,6 +102,16 @@ public class GameManager : MonoBehaviour {
 
             // Sets the object to be destroyed after a while.
             Destroy(newLava, 4f);
+        }
+    }
+
+    // Keeps track of the players alive.
+    public void KillPlayer()
+    {
+        playersAlive--;
+        if(playersAlive == 1)
+        {
+            gameOverCanvas.SetActive(true);
         }
     }
 }
