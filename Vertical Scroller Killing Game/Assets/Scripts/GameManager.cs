@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 // Manages the global variables of the UI.
@@ -9,14 +10,15 @@ public class GameManager : MonoBehaviour {
     public static GameManager gameManager;
 
     [Header("Game Flow")]
+    public bool isGameOver;
+    public int numberPlayers = 4;
     public int respawnTime;
     public GameObject fleshBase;
     public Sprite[] fleshSprites;
     public Sprite[] lavaSprites;
 
     [Header("Player Manager")]
-    public GameObject[] players;
-    public int playersAlive;
+    public List<GameObject> availableClasses;
 
     [Header("Audio")]
     public AudioClip damageClip;
@@ -29,7 +31,8 @@ public class GameManager : MonoBehaviour {
     public Text winnerText;
 
     // Internal.
-    public int _currentController;
+    private List<GameObject> _playersAlive = new List<GameObject>();
+    private int _currentController;
 
     // Use this for early initialization.
     void Awake()
@@ -39,9 +42,13 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-	    // Creates a new player text for each player.
-        foreach(GameObject player in players)
+        // Selects a random class per player.
+        for(int i = 0; i < numberPlayers; i++)
         {
+            int randomClass = Random.Range(0, availableClasses.Count);
+            GameObject player = availableClasses[randomClass];
+            availableClasses.Remove(player);
+
             // Creates a player at an assigned spawn point.
             _currentController++;
             Vector3 spawnPosition = new Vector3(Random.Range(-3.5f, 3.5f), 5f, 0f);
@@ -60,10 +67,30 @@ public class GameManager : MonoBehaviour {
             // Assigns the controler to this characther.
             PlayerController playerControler = newPlayer.GetComponent<PlayerController>();
             playerControler.playerController = _currentController;
+            _playersAlive.Add(newPlayer);
         }
+    }
 
-        // Counts players alive to the count.
-        playersAlive = players.Length;
+    // Update is called every frame.
+    void Update()
+    {
+        // Only allows input if it's game over.
+        if(isGameOver)
+        {
+            // Reloads the game scene.
+            if (Input.GetButtonDown("Joystick 1 Jump") || Input.GetButtonDown("Joystick 2 Jump") || Input.GetButtonDown("Joystick 3 Jump") || Input.GetButtonDown("Joystick 4 Jump"))
+            {
+                Time.timeScale = 1;
+                SceneManager.LoadScene(1);
+            }
+      
+            // Loads the menu scene.
+            if (Input.GetButtonDown("Joystick 1 Attack") || Input.GetButtonDown("Joystick 2 Attack") || Input.GetButtonDown("Joystick 3 Attack") || Input.GetButtonDown("Joystick 4 Attack"))
+            {
+                Time.timeScale = 1;
+                SceneManager.LoadScene(0);
+            }
+        }
     }
 
     // Used for creating gore at a certain position.
@@ -107,25 +134,22 @@ public class GameManager : MonoBehaviour {
     }
 
     // Keeps track of the players alive.
-    public void KillPlayer()
+    public void KillPlayer(GameObject player)
     {
-        playersAlive--;
-        string playerAlive = "???";
+        // Removes this player from the list.
+        _playersAlive.Remove(player);
+
         // Checks which player is still alive.
-        if(playersAlive == 1)
+        if (_playersAlive.Count == 1)
         {
-            // Checks which of the characthers is not dead.
-            foreach(GameObject player in players)
-            {
-                if(!player.GetComponent<PlayerDamage>().isDead)
-                {
-                    playerAlive = player.GetComponent<ClassInfo>().className;
-                }
-            }
+            // Initiailzes the string of the winning player.
+            string playerAlive = _playersAlive[0].GetComponent<ClassInfo>().className;
 
             // Updates the canvas.
+            Time.timeScale = 0;
             gameOverCanvas.SetActive(true);
             winnerText.text = playerAlive + " Wins!";
+            isGameOver = true;
         }
     }
 }

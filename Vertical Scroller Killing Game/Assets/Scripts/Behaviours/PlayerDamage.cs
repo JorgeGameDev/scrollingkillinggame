@@ -76,8 +76,7 @@ public class PlayerDamage : MonoBehaviour {
         }
         else
         {
-            GameManager.gameManager.KillPlayer();
-            isDead = true;
+            GameManager.gameManager.KillPlayer(gameObject);
             _countdownText.text = "RIP!";
         }
 

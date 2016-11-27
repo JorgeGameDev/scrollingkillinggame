@@ -5,8 +5,14 @@ using UnityEngine.SceneManagement;
 // Used for menu functionality.
 public class Menu : MonoBehaviour {
 
+    // Use this for initialization.
+    void Start()
+    {
+        Time.timeScale = 1;
+    }
+
     // Update is called every frame
-	void Update () 
+    void Update () 
 	{
         // Checks for input loading the actual game scene.
 		if (Input.GetButtonDown ("Joystick 1 Jump") || Input.GetButtonDown("Joystick 2 Jump") || Input.GetButtonDown("Joystick 3 Jump") || Input.GetButtonDown("Joystick 4 Jump")) 
