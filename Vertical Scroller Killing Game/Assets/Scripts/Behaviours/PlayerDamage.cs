@@ -6,6 +6,7 @@ using System.Collections;
 public class PlayerDamage : MonoBehaviour {
 
     [Header("Player Damage")]
+    [ReadOnly]
     public int stocks = 3;
     public float playerDamage;
     public GameObject associatedCounter;
@@ -75,6 +76,8 @@ public class PlayerDamage : MonoBehaviour {
         }
         else
         {
+            GameManager.gameManager.KillPlayer();
+            isDead = true;
             _countdownText.text = "RIP!";
         }
 

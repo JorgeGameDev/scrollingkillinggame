@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 // Manages the global variables of the UI.
 public class GameManager : MonoBehaviour {
@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour {
     public GameObject playerText;
     public RectTransform playerRect;
     public GameObject gameOverCanvas;
+    public Text winnerText;
 
     // Internal.
     public int _currentController;
@@ -109,9 +110,22 @@ public class GameManager : MonoBehaviour {
     public void KillPlayer()
     {
         playersAlive--;
+        string playerAlive = "???";
+        // Checks which player is still alive.
         if(playersAlive == 1)
         {
+            // Checks which of the characthers is not dead.
+            foreach(GameObject player in players)
+            {
+                if(!player.GetComponent<PlayerDamage>().isDead)
+                {
+                    playerAlive = player.GetComponent<ClassInfo>().className;
+                }
+            }
+
+            // Updates the canvas.
             gameOverCanvas.SetActive(true);
+            winnerText.text = playerAlive + " Wins!";
         }
     }
 }
