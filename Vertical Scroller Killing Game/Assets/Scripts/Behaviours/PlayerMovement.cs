@@ -96,7 +96,7 @@ public class PlayerMovement : MonoBehaviour {
     void Jumping()
     {
         // Checks if the player has pressed the jump key.
-        if (Input.GetButtonDown("Joystick " + _playerController.playerController + " Jump") && IsGrounded())
+        if (Input.GetButtonDown("Joystick " + _playerController.playerController + " Jump") && IsGrounded() && !_hasJumped)
         {
             _hasJumped = true;
             _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
