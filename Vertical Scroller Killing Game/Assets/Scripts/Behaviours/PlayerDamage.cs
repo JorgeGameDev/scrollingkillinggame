@@ -6,8 +6,7 @@ using System.Collections;
 public class PlayerDamage : MonoBehaviour {
 
     [Header("Player Damage")]
-    [ReadOnly]
-    public int stocks = 3;
+    public int stocks = 4;
     public float playerDamage;
     public GameObject associatedCounter;
 

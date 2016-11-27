@@ -42,6 +42,13 @@ public class PlayerMovement : MonoBehaviour {
             HorizontalMovement();
             Jumping();
         }
+        else
+        {
+            if(IsGrounded())
+            {
+                _isKnockbacked = false;
+            }
+        }
 
         Animate();
         ControlPosition();
@@ -160,7 +167,7 @@ public class PlayerMovement : MonoBehaviour {
         StartKnockback(knockbackForce);
     }
 
-    IEnumerator StartKnockback(float knockbackForce)
+    void StartKnockback(float knockbackForce)
     {
         // Gives the knock back to the player.
         _isKnockbacked = true;
@@ -174,8 +181,6 @@ public class PlayerMovement : MonoBehaviour {
 
         // Adds force to the rigidbody.
         _rigidbody.AddForce(knockbackVector);
-        yield return new WaitForSeconds(0.5f);
-        _isKnockbacked = false;
     }
 
     // Assures the player is on a platform.
