@@ -18,7 +18,7 @@ public class WeaponController : MonoBehaviour {
     // Use this for initialization.
     void Start()
     {
-        _classInfo = transform.root.GetComponent<ClassInfo>();
+        _classInfo = transform.parent.GetComponent<ClassInfo>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _animator = GetComponent<Animator>();
     }

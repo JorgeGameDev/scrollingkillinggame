@@ -21,7 +21,7 @@ public class PlayerAttack : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	    // Checks if the player has pressed it's assigned controls.
-        if(Input.GetButtonDown("Joystick " + _playerController.playerController + " Attack") || XCI.GetButtonDown(XboxButton.X, _classInfo.assignedController))
+        if(Input.GetButtonDown("Joystick " + _playerController.playerController + " Attack"))
         {
             // Checks if the animation is already playing or not.
             if(!_weaponController.animationPlaying)

@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour {
     private PlayerDamage _playerDamage;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
+    private WaitForSeconds _knockbackTime;
     private bool _hasJumped;
     private bool _isKnockbacked;
 
@@ -59,14 +60,14 @@ public class PlayerMovement : MonoBehaviour {
         horAxis = Mathf.Round(horAxis);
 
         // Checks if the player has pressed any specific key.
-        if(Input.GetKey(_classInfo.moveRight) || XCI.GetButton(XboxButton.DPadRight, _classInfo.assignedController))
+        /*if(Input.GetKey(_classInfo.moveRight) || XCI.GetButton(XboxButton.DPadRight, _classInfo.assignedController))
         {
             horAxis = 1;
         }
         else if(Input.GetKey(_classInfo.moveLeft) || XCI.GetButton(XboxButton.DPadLeft, _classInfo.assignedController))
         {
             horAxis = -1;
-        }
+        }*/
 
         // Applies the velocity to the characther based on the player input.
         float horVelocity = horAxis * _classInfo.velocity;
@@ -95,7 +96,7 @@ public class PlayerMovement : MonoBehaviour {
     void Jumping()
     {
         // Checks if the player has pressed the jump key.
-        if ((Input.GetButtonDown("Joystick " + _playerController.playerController + " Jump") || XCI.GetButtonDown(XboxButton.A, _classInfo.assignedController)) && IsGrounded())
+        if (Input.GetButtonDown("Joystick " + _playerController.playerController + " Jump") && IsGrounded())
         {
             _hasJumped = true;
             _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
@@ -144,7 +145,7 @@ public class PlayerMovement : MonoBehaviour {
     // Checks if the player is still touching the grand.
     bool IsGrounded()
     {
-        return Physics2D.OverlapCircle(jumpingCheck.transform.position, 0.01f, groundLayer);
+        return Physics2D.OverlapCircle(jumpingCheck.transform.position, 0.1f, groundLayer);
     }
 
     // Used to respawn the player.
@@ -160,18 +161,25 @@ public class PlayerMovement : MonoBehaviour {
     // Does knockback to the player.
     public void ReceiveKnockback(float knockbackForce)
     {
+        StartKnockback(knockbackForce);
+    }
+
+    IEnumerator StartKnockback(float knockbackForce)
+    {
         // Gives the knock back to the player.
         _isKnockbacked = true;
-        Vector2 knockbackVector = new Vector2(knockbackForce, knockbackForce/2);
+        Vector2 knockbackVector = new Vector2(knockbackForce, knockbackForce / 2);
 
         // Applies the force vector of the knockback.
-        if(transform.localScale.x == 1)
+        if (transform.localScale.x == 1)
         {
             knockbackVector.x *= 1;
         }
 
         // Adds force to the rigidbody.
         _rigidbody.AddForce(knockbackVector);
+        yield return new WaitForSeconds(0.5f);
+        _isKnockbacked = false;
     }
 
     // Assures the player is on a platform.

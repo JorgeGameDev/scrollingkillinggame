@@ -62,11 +62,15 @@ public class PlayerDamage : MonoBehaviour {
 
         // Nulls the damage and checks if the player still has stocks remaining.
         isRespawning = true;
-        playerDamage = 0;
         if(stocks > 0)
         {
+            playerDamage = 0;
             stocks--;
             StartCoroutine(RespawnTimer());
+        }
+        else
+        {
+            _countdownText.text = "RIP!";
         }
 
         // Updates the canvas.

@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour {
         {
             // Creates a player at an assigned spawn point.
             _currentController++;
-            Vector3 spawnPosition = new Vector3(Random.Range(-6.5f, 6.5f), 5f, 0f);
+            Vector3 spawnPosition = new Vector3(Random.Range(-4f, 4f), 5f, 0f);
             GameObject newPlayer = (GameObject)Instantiate(player, spawnPosition, Quaternion.identity);
 
             // Creates a new UI with the percentages.
