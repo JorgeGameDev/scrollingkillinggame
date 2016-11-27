@@ -9,7 +9,6 @@ public class PlatformFactory : MonoBehaviour {
 	public float speed = 0.1f;
     public Vector2 spawnPosition;
 	public GameObject firstplatform;
-	public GameObject player;
 
     // Internal.
     private bool _coolDown = false;
