@@ -52,7 +52,7 @@ public class WeaponController : MonoBehaviour {
             if(!_hitGameObjects.Contains(collidedPlayer))
             {
                 _hitGameObjects.Add(collidedPlayer);
-                collidedPlayer.GetComponent<PlayerDamage>().ApplyDamage(_classInfo.attackDamage);
+                collidedPlayer.GetComponent<PlayerDamage>().ApplyDamage(_classInfo.attackDamage, _classInfo.knockbackForce);
             }
         }
     }

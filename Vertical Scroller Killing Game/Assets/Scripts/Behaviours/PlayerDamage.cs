@@ -8,12 +8,87 @@ public class PlayerDamage : MonoBehaviour {
     [Header("Player Damage")]
     public int stocks = 3;
     public float playerDamage;
-    public Text associatedCounter;
+    public GameObject associatedCounter;
+
+    [Header("Player Status")]
+    public bool isRespawning;
+    public bool isDead;
+
+    // Internal
+    private Text _playerName;
+    private Text _damageText;
+    private Text _countdownText;
+    private WaitForSeconds _respawnTime;
+    private PlayerMovement _playerMovement;
+
+    // Use this for initialization
+    void Start()
+    {
+        _respawnTime = new WaitForSeconds(1f);
+        _playerMovement = GetComponent<PlayerMovement>();
+        _playerName = associatedCounter.transform.GetChild(0).GetComponent<Text>();
+        _damageText = associatedCounter.transform.GetChild(1).GetComponent<Text>();
+        _countdownText = associatedCounter.transform.GetChild(2).GetComponent<Text>();
+    }
 
     // Applies damage to the player.
-    public void ApplyDamage(int damageValue)
+    public void ApplyDamage(int damageValue, float knockbackForce)
     {
-        playerDamage += damageValue;
-        associatedCounter.text = playerDamage + "% [" + stocks + "]";
+        // Checks if damage hasn't overflown.
+        if(playerDamage < 420)
+        {
+            GameManager.gameManager.CreateGore(transform.position, 4);
+            playerDamage += damageValue;
+            UpdateCanvas();
+        }
+
+        // Gives knockback.
+        _playerMovement.ReceiveKnockback(knockbackForce);
+    }
+
+    // Updates the Canvas with the players current damage.
+    public void UpdateCanvas()
+    {
+        _damageText.text = playerDamage + "% [" + stocks + "]";
+    }
+
+    // Kills the player.
+    public void KillPlayer()
+    {
+        // Displays the text to gray.
+        _playerName.color = Color.gray;
+        _damageText.color = Color.gray;
+        GameManager.gameManager.CreateLava(transform.position);
+
+        // Nulls the damage and checks if the player still has stocks remaining.
+        isRespawning = true;
+        playerDamage = 0;
+        if(stocks > 0)
+        {
+            stocks--;
+            StartCoroutine(RespawnTimer());
+        }
+
+        // Updates the canvas.
+        UpdateCanvas();
+    }
+
+    // Waits for the player respawn.
+    IEnumerator RespawnTimer()
+    {
+        // Shows a waiting timer.
+        _countdownText.enabled = true;
+        for (int i = GameManager.gameManager.respawnTime; i != 0 ; i--)
+        {
+            _countdownText.text = i.ToString();
+            yield return _respawnTime;
+        }
+
+        // Respawns the player.
+        _playerName.color = Color.white;
+        _damageText.color = Color.white;
+        _countdownText.enabled = false;
+        isRespawning = false;
+        GetComponent<PlayerMovement>().RespawnPlayerPos();
     }
 }

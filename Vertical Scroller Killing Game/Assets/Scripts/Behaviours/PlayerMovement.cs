@@ -12,12 +12,13 @@ public class PlayerMovement : MonoBehaviour {
     public LayerMask groundLayer;
 
     // Internal.
+    private ClassInfo _classInfo;
     private PlayerController _playerController;
+    private PlayerDamage _playerDamage;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
-    private ClassInfo _classInfo;
-    private PlayerDamage _playerDamage;
     private bool _hasJumped;
+    private bool _isKnockbacked;
 
 	// Use this for initialization
 	void Start ()
@@ -33,22 +34,21 @@ public class PlayerMovement : MonoBehaviour {
 	void FixedUpdate ()
     {
         // Calls all the necessary functions for player movement.
-        HorizontalMovement();
-        Jumping();
-        Animate();
-    }
-
-    // Updates the animator to reflect the current animation playing.
-    void Animate()
-    {
-        if(_rigidbody.velocity.x > 0 || _rigidbody.velocity.x < 0)
+        if(!_isKnockbacked)
         {
-            _animator.SetBool("Walking", true);
+            HorizontalMovement();
+            Jumping();
         }
         else
         {
-            _animator.SetBool("Walking", false);
+            if(IsGrounded())
+            {
+                _isKnockbacked = false;
+            }
         }
+
+        Animate();
+        ControlPosition();
     }
 
     // Does the horizontal movement.
@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour {
         // Applies the velocity to the characther based on the player input.
         float horVelocity = horAxis * _classInfo.velocity;
 
-        // Causes a 
+        // Reduces velocity based on the player's damage.
         if(horVelocity > 0)
         {
             horVelocity -= _playerDamage.playerDamage / 100;
@@ -108,12 +108,71 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
+    // Updates the animator to reflect the current animation playing.
+    void Animate()
+    {
+        if (_rigidbody.velocity.x > 0 || _rigidbody.velocity.x < 0)
+        {
+            _animator.SetBool("Walking", true);
+        }
+        else
+        {
+            _animator.SetBool("Walking", false);
+        }
+    }
+
+    // Controls the player position.
+    void ControlPosition()
+    {
+        // Makes sure that the player position doesn't go off secreen.
+        Vector3 playerPosition = transform.position;
+        playerPosition.x = Mathf.Clamp(playerPosition.x, -6.7f, 6.7f);
+
+        // Checks if the player hasn't died.
+        if(playerPosition.y < -5.15f && !_playerDamage.isRespawning)
+        {
+            // Kills the player to respawn them.
+            _rigidbody.isKinematic = true;
+            GetComponent<BoxCollider2D>().enabled = false;
+            _playerDamage.KillPlayer();
+        }
+
+        // Sets the player position.
+        transform.position = playerPosition;
+    }
+
     // Checks if the player is still touching the grand.
     bool IsGrounded()
     {
         return Physics2D.OverlapCircle(jumpingCheck.transform.position, 0.01f, groundLayer);
     }
 
+    // Used to respawn the player.
+    public void RespawnPlayerPos()
+    {
+        // Resets rigidbody and player position.
+        _rigidbody.isKinematic = false;
+        GetComponent<BoxCollider2D>().enabled = true;
+        Vector3 spawnPosition = new Vector3(Random.Range(-6.5f, 6.5f), 5f, 0f);
+        transform.position = spawnPosition;
+    }
+
+    // Does knockback to the player.
+    public void ReceiveKnockback(float knockbackForce)
+    {
+        // Gives the knock back to the player.
+        _isKnockbacked = true;
+        Vector2 knockbackVector = new Vector2(knockbackForce, knockbackForce/2);
+
+        // Applies the force vector of the knockback.
+        if(transform.localScale.x == 1)
+        {
+            knockbackVector.x *= 1;
+        }
+
+        // Adds force to the rigidbody.
+        _rigidbody.AddForce(knockbackVector);
+    }
 
     // Assures the player is on a platform.
     void OnCollisionEnter2D(Collision2D collision)

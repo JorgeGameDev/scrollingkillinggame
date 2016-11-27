@@ -13,6 +13,7 @@ public class ClassInfo : MonoBehaviour {
     public float velocity;
     public float jumpForce;
     public int attackDamage;
+    public float knockbackForce;
 
     [Header("Effects")]
     public bool isSlowdown;
