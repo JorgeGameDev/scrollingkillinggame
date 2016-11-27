@@ -14,6 +14,7 @@ public class WeaponController : MonoBehaviour {
     private ClassInfo _classInfo;
     private BoxCollider2D _boxCollider;
     private Animator _animator;
+    private AudioSource _audioSource;
 
     // Use this for initialization.
     void Start()
@@ -21,6 +22,7 @@ public class WeaponController : MonoBehaviour {
         _classInfo = transform.parent.GetComponent<ClassInfo>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _animator = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
     }
    
 	// Use this to control the start of the animation.
@@ -29,6 +31,7 @@ public class WeaponController : MonoBehaviour {
         animationPlaying = true;
         _boxCollider.enabled = true;
         _animator.SetTrigger("Attack");
+        _audioSource.Play();
     }
 
     // Use this to check if the animation is over.

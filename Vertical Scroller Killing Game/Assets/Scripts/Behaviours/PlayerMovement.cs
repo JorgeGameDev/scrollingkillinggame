@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour {
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private WaitForSeconds _knockbackTime;
+    private AudioSource _audioSource;
     private bool _hasJumped;
     private bool _isKnockbacked;
 
@@ -29,6 +30,7 @@ public class PlayerMovement : MonoBehaviour {
         _classInfo = GetComponent<ClassInfo>();
         _playerDamage = GetComponent<PlayerDamage>();
         _animator = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -39,13 +41,6 @@ public class PlayerMovement : MonoBehaviour {
         {
             HorizontalMovement();
             Jumping();
-        }
-        else
-        {
-            if(IsGrounded())
-            {
-                _isKnockbacked = false;
-            }
         }
 
         Animate();
@@ -99,6 +94,7 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetButtonDown("Joystick " + _playerController.playerController + " Jump") && IsGrounded() && !_hasJumped)
         {
             _hasJumped = true;
+            _audioSource.Play();
             _rigidbody.AddForce(_classInfo.jumpForce * 10 * Vector2.up);
         }
 
@@ -130,7 +126,7 @@ public class PlayerMovement : MonoBehaviour {
         playerPosition.x = Mathf.Clamp(playerPosition.x, -6.7f, 6.7f);
 
         // Checks if the player hasn't died.
-        if(playerPosition.y < -5.15f && !_playerDamage.isRespawning)
+        if(playerPosition.y < -4.6f && !_playerDamage.isRespawning)
         {
             // Kills the player to respawn them.
             _rigidbody.isKinematic = true;

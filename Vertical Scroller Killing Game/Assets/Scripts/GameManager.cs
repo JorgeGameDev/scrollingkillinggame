@@ -17,6 +17,10 @@ public class GameManager : MonoBehaviour {
     [Header("Player Manager")]
     public GameObject[] players;
 
+    [Header("Audio")]
+    public AudioClip damageClip;
+    public AudioClip deathClip;
+
     [Header("UI Elements")]
     public GameObject playerText;
     public RectTransform playerRect;
@@ -37,7 +41,7 @@ public class GameManager : MonoBehaviour {
         {
             // Creates a player at an assigned spawn point.
             _currentController++;
-            Vector3 spawnPosition = new Vector3(Random.Range(-4f, 4f), 5f, 0f);
+            Vector3 spawnPosition = new Vector3(Random.Range(-3.5f, 3.5f), 5f, 0f);
             GameObject newPlayer = (GameObject)Instantiate(player, spawnPosition, Quaternion.identity);
 
             // Creates a new UI with the percentages.
