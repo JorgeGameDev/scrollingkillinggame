@@ -4,7 +4,7 @@ using System.Collections;
 
 // Takes care of the player movement.
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerController))]
+ 
 public class PlayerMovement : MonoBehaviour {
 
     [Header("Jumping Properties")]
